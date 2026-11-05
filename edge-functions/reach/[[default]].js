@@ -12,25 +12,17 @@ export async function onRequest(context) {
   
   // 根据URL匹配路由
   const url = new URL(context.request.url);
-  let pathname = url.pathname;
-  let targetUrl = new URL('https://www.baidu.com')
-  // reach搜路由
-  if (pathname.startsWith('/reach/')) {
+  const pathname = url.pathname.replace('/reach/', '/');
+  const targetUrl = new URL('https://account.italent.cn' + pathname);
 
-    // 处理 cookie 设置请求
-    const cookieValue = url.searchParams.get('cookievalue');
-    if (cookieValue) {
-      return new Response('Parameter received: ' + cookieValue, {
-        headers: { ...headers,
-          'Set-Cookie': `ssn_Tita_PC=${cookieValue}; Path=/; SameSite=None; Secure`,
-        }
-      });
-    }
-    pathname = pathname.replace('/reach/', '/');
-    targetUrl = new URL('https://account.italent.cn' + pathname);
-  } else if (pathname.startsWith('/loginehr/')) {
-    pathname = pathname.replace('/loginehr/', '/');
-    targetUrl = new URL('https://login.italent.cn' + pathname);
+  // cookie设置请求 直接返回保存Cookie
+  const cookieValue = url.searchParams.get('cookievalue');
+  if (cookieValue) {
+    return new Response('Parameter received: ' + cookieValue, {
+      headers: { ...headers,
+        'Set-Cookie': `ssn_Tita_PC=${cookieValue}; Path=/; SameSite=None; Secure`,
+      }
+    });
   }
 
   url.searchParams.forEach((value, key) => {
