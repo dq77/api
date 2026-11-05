@@ -36,18 +36,19 @@ export async function onRequest(context) {
   url.searchParams.forEach((value, key) => {
     targetUrl.searchParams.append(key, value);
   });
-  const modifiedRequest = new Request(targetUrl.toString(), {
-    method: context.request.method,
-    headers: context.request.headers,
-    body: context.request.body
-  });
-  
   try {
-    let response = await fetch(modifiedRequest);
-    const clone = response.clone();
-    const text = await clone.text();
-    console.log(modifiedRequest.url, '---');
-    console.log(response.status , '----');
+    // 两个必要的请求头转发
+    const proxyHeaders = new Headers();
+    const userAgent = context.request.headers.get('User-Agent');
+    if (userAgent) proxyHeaders.set('User-Agent', userAgent);
+    const cookie = context.request.headers.get('Cookie');
+    if (cookie) proxyHeaders.set('Cookie', cookie);
+
+    let response = await fetch(targetUrl.toString(), {
+      method: context.request.method,
+      headers: proxyHeaders,
+      body: context.request.body
+    });
 
 
     // 克隆响应并添加 CORS 头
