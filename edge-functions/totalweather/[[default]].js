@@ -1,7 +1,5 @@
 
 export async function onRequest(context) {
-  return new Response("Hello, world!")
-  // 本接口地址不确定是否需要 于2026年11月5日注释掉 长时间无影响则可以删除本文件
   const headers = {
     'Access-Control-Allow-Origin': context.request.headers.get('Origin') || '*',
     'Access-Control-Allow-Methods': 'GET, HEAD, POST, OPTIONS',
@@ -14,8 +12,18 @@ export async function onRequest(context) {
   
   // 根据URL匹配路由
   const url = new URL(context.request.url);
-  const pathname = pathname.replace('/loginehr/', '/');
-  const targetUrl = new URL('https://login.italent.cn' + pathname);
+  const pathname = url.pathname.replace('/totalweather/', '/');
+  const targetUrl = new URL('https://d1.weather.com.cn' + pathname);
+
+  // cookie设置请求 直接返回保存Cookie
+  const cookieValue = url.searchParams.get('cookievalue');
+  if (cookieValue) {
+    return new Response('Parameter received: ' + cookieValue, {
+      headers: { ...headers,
+        'Set-Cookie': `ssn_Tita_PC=${cookieValue}; Path=/; SameSite=None; Secure`,
+      }
+    });
+  }
 
   url.searchParams.forEach((value, key) => {
     targetUrl.searchParams.append(key, value);
