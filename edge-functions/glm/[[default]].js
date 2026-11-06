@@ -3,7 +3,7 @@ export async function onRequest(context) {
   const headers = {
     'Access-Control-Allow-Origin': context.request.headers.get('Origin') || '*',
     'Access-Control-Allow-Methods': 'GET, HEAD, POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     'Access-Control-Allow-Credentials': 'true'
   }
   if (context.request.method === 'OPTIONS') {
