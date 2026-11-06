@@ -15,30 +15,14 @@ export async function onRequest(context) {
   const pathname = url.pathname.replace('/totalweather/', '/');
   const targetUrl = new URL('https://d1.weather.com.cn' + pathname);
 
-  // cookie设置请求 直接返回保存Cookie
-  const cookieValue = url.searchParams.get('cookievalue');
-  if (cookieValue) {
-    return new Response('Parameter received: ' + cookieValue, {
-      headers: { ...headers,
-        'Set-Cookie': `ssn_Tita_PC=${cookieValue}; Path=/; SameSite=None; Secure`,
-      }
-    });
-  }
-
   url.searchParams.forEach((value, key) => {
     targetUrl.searchParams.append(key, value);
   });
   try {
-    // 两个必要的请求头转发
-    const proxyHeaders = new Headers();
-    const userAgent = context.request.headers.get('User-Agent');
-    if (userAgent) proxyHeaders.set('User-Agent', userAgent);
-    const cookie = context.request.headers.get('Cookie');
-    if (cookie) proxyHeaders.set('Cookie', cookie);
 
     let response = await fetch(targetUrl.toString(), {
       method: context.request.method,
-      headers: proxyHeaders,
+      headers: new Headers(context.request.headers),
       body: context.request.body
     });
 
