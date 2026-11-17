@@ -53,7 +53,7 @@ export async function onRequest(context) {
       // 按逗号分割多个 Cookie（注意：某些情况下可能需要更复杂的分割逻辑）
       const cookies = setCookies.split(/,\s*(?=ssn_)/);
       cookies.forEach(cookie => {
-        newCookie = cookie.replace(' domain=italent.cn;', '');
+        const newCookie = cookie.replace(' domain=italent.cn;', '');
         newResponse.headers.append('Set-Cookie', newCookie);
       })
     }
